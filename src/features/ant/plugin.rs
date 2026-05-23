@@ -38,19 +38,26 @@ fn spawn_ant(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    const TRIANGLE_SIZE: f32 = 12.0;
+    const TRIANGLE_SIZE: f32 = 6.0;
+    const ANT_COUNT: usize = 100;
 
-    commands.spawn((
-        Ant,
-        Mesh2d(meshes.add(Triangle2d::new(
-            Vec2::new(0.0, TRIANGLE_SIZE * 1.5),
-            Vec2::new(-TRIANGLE_SIZE, -TRIANGLE_SIZE),
-            Vec2::new(TRIANGLE_SIZE, -TRIANGLE_SIZE),
-        ))),
-        MeshMaterial2d(materials.add(Color::srgb(1.0, 0.0, 0.0))),
-        Transform::default(),
-        Velocity::zero(),
+    let mesh = meshes.add(Triangle2d::new(
+        Vec2::new(0.0, TRIANGLE_SIZE * 1.5),
+        Vec2::new(-TRIANGLE_SIZE, -TRIANGLE_SIZE),
+        Vec2::new(TRIANGLE_SIZE, -TRIANGLE_SIZE),
     ));
+
+    let material = materials.add(Color::srgb(1.0, 0.0, 0.0));
+
+    commands.spawn_batch((0..ANT_COUNT).map(move |_| {
+        (
+            Ant,
+            Mesh2d(mesh.clone()),
+            MeshMaterial2d(material.clone()),
+            Transform::default(),
+            Velocity::zero(),
+        )
+    }));
 }
 
 fn movement_system(
