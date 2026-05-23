@@ -39,7 +39,7 @@ fn spawn_ant(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     const TRIANGLE_SIZE: f32 = 6.0;
-    const ANT_COUNT: usize = 100;
+    const ANT_COUNT: usize = 1;
 
     let mesh = meshes.add(Triangle2d::new(
         Vec2::new(0.0, TRIANGLE_SIZE * 1.5),
@@ -82,16 +82,15 @@ fn movement_system(
 
         transform.rotation = Quat::from_rotation_z(velocity.to_vec2().to_angle() - FRAC_PI_2);
 
-        if transform.translation.x > half_w {
-            transform.translation.x = -half_w;
-        } else if transform.translation.x < -half_w {
-            transform.translation.x = half_w;
-        }
+        respawn_edges(&mut transform.translation.x, half_w);
+        respawn_edges(&mut transform.translation.y, half_h);
+    }
+}
 
-        if transform.translation.y > half_h {
-            transform.translation.y = -half_h;
-        } else if transform.translation.y < -half_h {
-            transform.translation.y = half_h;
-        }
+fn respawn_edges(value: &mut f32, max: f32) {
+    if *value > max {
+        *value = -max;
+    } else if *value < -max {
+        *value = max;
     }
 }
